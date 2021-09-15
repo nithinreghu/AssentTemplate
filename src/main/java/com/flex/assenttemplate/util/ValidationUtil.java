@@ -65,16 +65,38 @@ public class ValidationUtil {
 		return bomTemplateList;
 	}
 
-	private static void validateMcode(List<BomTemplate> bomTemplateData, Map<String, MstrDetails> mstrData) {
-		// highlight mailID
-		// Check if mcode in excel1 is available in excel2
-		// ------if no, highlight mcode cell in excel1
-		// --------------------------------------------------------------------------------------------
-		// ------if yes,
-		// -------- copy (mfrname, obsolute) value from excel2 to excel1
-		// --------------------------------------------------------------------------------------------
-		// -------- If mfr and manufacturer in excel1 are not equal, highlight
-		// manufacturer cell in excel1
+	private static void validateMcode(List<BomTemplate> bomTemplateList, Map<String, MstrDetails> mstrData) {
+
+		// Get each row
+		for (BomTemplate bomTemplate : bomTemplateList) {
+
+			if (bomTemplate.getEmailID().toLowerCase().contains("@flex.com")
+					|| bomTemplate.getEmailID().toLowerCase().contains("@bomcheck.com")) {
+				
+				// Highlight email column in bom template excel
+
+			}
+
+			// Get the values corresponding to mcode
+			MstrDetails mstrDetails = mstrData.get(bomTemplate.getMcode());
+			if (null != mstrDetails) {
+
+				// String mfrname = mstrDetails.getGlobalManufacturerName();
+				// String obsolute = mstrDetails.getObsolete();
+
+				// Update (mfrname, obsolute) value in bom template excel
+
+				if (!bomTemplate.getManufacturer().equals(mstrDetails.getGlobalManufacturerName())) {
+
+					// highlight manufacturer cell in bom template excel
+				}
+
+			} else {
+
+				// Highlight mcode cell in bom template excel
+			}
+
+		}
 
 	}
 
