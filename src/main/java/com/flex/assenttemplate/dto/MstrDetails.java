@@ -1,17 +1,17 @@
 package com.flex.assenttemplate.dto;
 
 public class MstrDetails {
-	
-	private String global;
+
+	private String globalMfgCodes;
 	private String globalManufacturerName;
 	private String obsolete;
 
-	public String getGlobal() {
-		return global;
+	public String getGlobalMfgCodes() {
+		return globalMfgCodes;
 	}
 
-	public void setGlobal(String global) {
-		this.global = global;
+	public void setGlobalMfgCodes(String globalMfgCodes) {
+		this.globalMfgCodes = globalMfgCodes;
 	}
 
 	public String getGlobalManufacturerName() {
