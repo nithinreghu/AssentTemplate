@@ -41,14 +41,24 @@ public class ValidationUtil {
 
 	private static List<BomTemplate> getBomTemplateExcelData(String bomTemplateFileName, Integer bomTemplateFirstRow)
 			throws IOException {
-		
+
 		// Read excel
 		List<List<String>> rowList = FileUtil.readExcel(bomTemplateFileName, bomTemplateFirstRow);
 		List<BomTemplate> bomTemplateList = new ArrayList<>();
-		
+
 		// Populate columns to java
-		
-		
+		for (List<String> row : rowList) {
+			
+			BomTemplate bomTemplate = new BomTemplate();
+			bomTemplate.setFlexPartNo(row.get(0));
+			bomTemplate.setDescription(row.get(1));
+			bomTemplate.setManufacturer(row.get(2));
+			bomTemplate.setMcode(row.get(3));
+			bomTemplate.setMpn(row.get(4));
+			bomTemplate.setEmailID(row.get(6));
+
+		}
+
 		return bomTemplateList;
 	}
 

@@ -5,8 +5,8 @@ public class BomTemplate {
 	private String flexPartNo;
 	private String description;
 	private String manufacturer;
-	private String mCODE;
-	private String mPN;
+	private String mcode;
+	private String mpn;
 	private String quantity;
 	private String emailID;
 	private String telno;
@@ -38,20 +38,20 @@ public class BomTemplate {
 		this.manufacturer = manufacturer;
 	}
 
-	public String getmCODE() {
-		return mCODE;
+	public String getMcode() {
+		return mcode;
 	}
 
-	public void setmCODE(String mCODE) {
-		this.mCODE = mCODE;
+	public void setMcode(String mcode) {
+		this.mcode = mcode;
 	}
 
-	public String getmPN() {
-		return mPN;
+	public String getMpn() {
+		return mpn;
 	}
 
-	public void setmPN(String mPN) {
-		this.mPN = mPN;
+	public void setMpn(String mpn) {
+		this.mpn = mpn;
 	}
 
 	public String getQuantity() {
