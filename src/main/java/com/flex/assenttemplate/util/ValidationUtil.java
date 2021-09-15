@@ -2,7 +2,9 @@ package com.flex.assenttemplate.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.flex.assenttemplate.dto.BomTemplate;
 import com.flex.assenttemplate.dto.MstrDetails;
@@ -13,17 +15,18 @@ public class ValidationUtil {
 			Integer mstrFirstRow) throws IOException {
 
 		List<BomTemplate> bomTemplateData = getBomTemplateExcelData(bomTemplateFileName, bomTemplateFirstRow);
-		List<MstrDetails> mstrData = getMstrExcelData(mstrFileName, mstrFirstRow);
+		Map<String, MstrDetails> mstrData = getMstrExcelData(mstrFileName, mstrFirstRow);
 
 		validateMcode(bomTemplateData, mstrData);
 
 	}
 
-	private static List<MstrDetails> getMstrExcelData(String mstrFileName, Integer mstrFirstRow) throws IOException {
+	private static Map<String, MstrDetails> getMstrExcelData(String mstrFileName, Integer mstrFirstRow)
+			throws IOException {
 
 		// Read excel
 		List<List<String>> rowList = FileUtil.readExcel(mstrFileName, mstrFirstRow);
-		List<MstrDetails> mstrDetailsList = new ArrayList<>();
+		Map<String, MstrDetails> mstrDetailsMap = new HashMap<>();
 
 		// Populate columns to java
 		for (List<String> row : rowList) {
@@ -33,10 +36,10 @@ public class ValidationUtil {
 			mstrDetails.setGlobalManufacturerName(row.get(1));
 			mstrDetails.setObsolete(row.get(2));
 
-			mstrDetailsList.add(mstrDetails);
+			mstrDetailsMap.put(mstrDetails.getGlobalMfgCodes(), mstrDetails);
 
 		}
-		return mstrDetailsList;
+		return mstrDetailsMap;
 	}
 
 	private static List<BomTemplate> getBomTemplateExcelData(String bomTemplateFileName, Integer bomTemplateFirstRow)
@@ -48,7 +51,7 @@ public class ValidationUtil {
 
 		// Populate columns to java
 		for (List<String> row : rowList) {
-			
+
 			BomTemplate bomTemplate = new BomTemplate();
 			bomTemplate.setFlexPartNo(row.get(0));
 			bomTemplate.setDescription(row.get(1));
@@ -62,7 +65,7 @@ public class ValidationUtil {
 		return bomTemplateList;
 	}
 
-	private static void validateMcode(List<BomTemplate> bomTemplateData, List<MstrDetails> mstrData) {
+	private static void validateMcode(List<BomTemplate> bomTemplateData, Map<String, MstrDetails> mstrData) {
 		// highlight mailID
 		// Check if mcode in excel1 is available in excel2
 		// ------if no, highlight mcode cell in excel1
