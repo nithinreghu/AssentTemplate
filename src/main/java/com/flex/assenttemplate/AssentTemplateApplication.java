@@ -14,13 +14,13 @@ public class AssentTemplateApplication implements ApplicationRunner {
 	@Value("${bomTemplateFileName}")
 	private String bomTemplateFileName;
 
-	@Value("${bomTemplateFirstRow}")
+	@Value("${bomTemplateFirstRow:2}")
 	private Integer bomTemplateFirstRow;
 
 	@Value("${mstrFileName}")
 	private String mstrFileName;
 
-	@Value("${mstrFirstRow}")
+	@Value("${mstrFirstRow:2}")
 	private Integer mstrFirstRow;
 
 	public static void main(String[] args) {
