@@ -25,7 +25,7 @@ public class FileUtil {
 			// Create a DataFormatter to format and get each cell's value as String
 			DataFormatter dataFormatter = new DataFormatter();
 
-			for (int i = firstRow - 1; i < sheet.getLastRowNum(); i++) {
+			for (int i = firstRow - 1; i <= sheet.getLastRowNum(); i++) {
 
 				columnList = new ArrayList<>();
 				Row row = sheet.getRow(i);

@@ -2,6 +2,7 @@ package com.flex.assenttemplate.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -51,7 +53,7 @@ public class ValidationUtil {
 			MstrDetails mstrDetails = new MstrDetails();
 			mstrDetails.setGlobalMfgCodes(row.get(0));
 			mstrDetails.setGlobalManufacturerName(row.get(1));
-			mstrDetails.setObsolete(row.get(2));
+			mstrDetails.setObsolete(row.get(3));
 
 			mcodeAndMstrDetailsMap.put(mstrDetails.getGlobalMfgCodes(), mstrDetails);
 
@@ -77,6 +79,8 @@ public class ValidationUtil {
 			bomTemplate.setMpn(row.get(4));
 			bomTemplate.setEmailID(row.get(6));
 
+			bomTemplateList.add(bomTemplate);
+
 		}
 
 		return bomTemplateList;
@@ -89,6 +93,10 @@ public class ValidationUtil {
 		Workbook workbook = WorkbookFactory.create(inputStream);
 		Sheet sheet = workbook.getSheetAt(0);
 
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND); 
+
 		// Get each row
 		int rowNum = 1;
 		for (BomTemplate bomTemplate : bomTemplateList) {
@@ -97,12 +105,12 @@ public class ValidationUtil {
 					|| bomTemplate.getEmailID().toLowerCase().contains("@bomcheck.com")) {
 
 				// Highlight email column in bom template excel
-				Cell emailCell = sheet.getRow(rowNum).getCell(EMAILID_COLUMN_NUMBER);
+				String email = sheet.getRow(rowNum).getCell(EMAILID_COLUMN_NUMBER).getStringCellValue();
+
+				Cell emailCell = sheet.getRow(rowNum).createCell(EMAILID_COLUMN_NUMBER);
+				emailCell.setCellStyle(cellStyle);
+				emailCell.setCellValue(email);
 				
-				CellStyle emailCellStyle = emailCell.getCellStyle();
-				emailCellStyle.setFillBackgroundColor(IndexedColors.YELLOW.index);
-				
-				emailCell.setCellStyle(emailCellStyle);
 				// sheet.getRow(rowNum).getCell(MCODE_COLUMN_NUMBER).setCellStyle(null);
 
 			}
@@ -113,20 +121,20 @@ public class ValidationUtil {
 
 				// Update global mfr in bom template excel
 				String mfrFromMstrExcel = mstrDetails.getGlobalManufacturerName();
-				sheet.getRow(rowNum).getCell(GLOBAL_MFR_COLUMN_NUMBER).setCellValue(mfrFromMstrExcel);
+				sheet.getRow(rowNum).createCell(GLOBAL_MFR_COLUMN_NUMBER).setCellValue(mfrFromMstrExcel);
 
 				// Update obsolete in bom template excel
 				String obsoleteFromMstrExcel = mstrDetails.getObsolete();
-				sheet.getRow(rowNum).getCell(OBSOLETE_COLUMN_NUMBER).setCellValue(obsoleteFromMstrExcel);
+				sheet.getRow(rowNum).createCell(OBSOLETE_COLUMN_NUMBER).setCellValue(obsoleteFromMstrExcel);
 
 				if (!bomTemplate.getManufacturer().equals(mstrDetails.getGlobalManufacturerName())) {
 
 					// highlight manufacturer cell in bom template excel
-
-					Cell manufacturerCell = sheet.getRow(rowNum).getCell(MANUFACTURER_COLUMN_NUMBER);
-					CellStyle manufacturerCellCellStyle = manufacturerCell.getCellStyle();
-					manufacturerCellCellStyle.setFillBackgroundColor(IndexedColors.YELLOW.getIndex());
-					manufacturerCell.setCellStyle(manufacturerCellCellStyle);
+					
+					String manufacturer = sheet.getRow(rowNum).getCell(MANUFACTURER_COLUMN_NUMBER).getStringCellValue();
+					Cell manufacturerCell = sheet.getRow(rowNum).createCell(MANUFACTURER_COLUMN_NUMBER);
+					manufacturerCell.setCellStyle(cellStyle);
+					manufacturerCell.setCellValue(manufacturer);
 
 					// sheet.getRow(rowNum).getCell(MANUFACTURER_COLUMN_NUMBER).setCellStyle(null);
 				}
@@ -134,11 +142,11 @@ public class ValidationUtil {
 			} else {
 
 				// Highlight mcode cell in bom template excel
-
-				Cell mcodeCell = sheet.getRow(rowNum).getCell(MCODE_COLUMN_NUMBER);
-				CellStyle mcodeCellStyle = mcodeCell.getCellStyle();
-				mcodeCellStyle.setFillBackgroundColor(IndexedColors.YELLOW.getIndex());
-				mcodeCell.setCellStyle(mcodeCellStyle);
+				
+				String mcode = sheet.getRow(rowNum).getCell(MCODE_COLUMN_NUMBER).getStringCellValue();
+				Cell mcodeCell = sheet.getRow(rowNum).createCell(MCODE_COLUMN_NUMBER);
+				mcodeCell.setCellStyle(cellStyle);
+				mcodeCell.setCellValue(mcode);
 
 				// sheet.getRow(rowNum).getCell(MCODE_COLUMN_NUMBER).setCellStyle(null);
 			}
@@ -146,6 +154,11 @@ public class ValidationUtil {
 			rowNum++;
 
 		}
+
+		FileOutputStream outputStream = new FileOutputStream(bomTemplateFileName);
+		workbook.write(outputStream);
+		workbook.close();
+		outputStream.close();
 
 	}
 
