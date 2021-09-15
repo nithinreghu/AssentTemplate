@@ -1,6 +1,6 @@
 package com.flex.assenttemplate.dto;
 
-public class ManufacturerCodes {
+public class MstrDetails {
 	
 	private String global;
 	private String globalManufacturerName;
