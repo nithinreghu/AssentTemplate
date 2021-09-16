@@ -33,8 +33,8 @@ public class ValidationUtil {
 	public static void validateBomTemplate(String bomTemplateFileName, Integer bomTemplateFirstRow, String mstrFileName,
 			Integer mstrFirstRow) throws IOException {
 
-		System.out.println("Reading data from " + bomTemplateFileName + ". Please wait...");
 		System.out.println("..........................................................");
+		System.out.println("Reading data from " + bomTemplateFileName + ". Please wait...");
 		System.out.println("..........................................................");
 		System.out.println("..........................................................");
 
@@ -46,7 +46,7 @@ public class ValidationUtil {
 		System.out.println("..........................................................");
 		Map<String, MstrDetails> mcodeAndMstrDetailsMap = getMstrExcelData(mstrFileName, mstrFirstRow);
 
-		System.out.println("Validating mcode. Please wait...");
+		System.out.println("Validating mcode....");
 		System.out.println("..........................................................");
 		System.out.println("..........................................................");
 		validateMcodeAndUpdateBomTemplate(bomTemplateFileName, bomTemplateData, mcodeAndMstrDetailsMap);
