@@ -33,10 +33,26 @@ public class ValidationUtil {
 	public static void validateBomTemplate(String bomTemplateFileName, Integer bomTemplateFirstRow, String mstrFileName,
 			Integer mstrFirstRow) throws IOException {
 
+		System.out.println("Reading data from " + bomTemplateFileName + ". Please wait...");
+		System.out.println("..........................................................");
+		System.out.println("..........................................................");
+		System.out.println("..........................................................");
+
 		List<BomTemplate> bomTemplateData = getBomTemplateExcelData(bomTemplateFileName, bomTemplateFirstRow);
+
+		System.out.println("Reading data from " + mstrFileName + ". Please wait...");
+		System.out.println("..........................................................");
+		System.out.println("..........................................................");
+		System.out.println("..........................................................");
 		Map<String, MstrDetails> mcodeAndMstrDetailsMap = getMstrExcelData(mstrFileName, mstrFirstRow);
 
+		System.out.println("Validating mcode. Please wait...");
+		System.out.println("..........................................................");
+		System.out.println("..........................................................");
 		validateMcodeAndUpdateBomTemplate(bomTemplateFileName, bomTemplateData, mcodeAndMstrDetailsMap);
+		System.out.println("Details are updated........................................");
+		System.out.println("Please verify the file............" + bomTemplateFileName);
+		System.out.println("..........................................................");
 
 	}
 
@@ -44,7 +60,8 @@ public class ValidationUtil {
 			throws IOException {
 
 		// Read excel
-		List<List<String>> rowList = FileUtil.readExcel(mstrFileName, mstrFirstRow);
+		int lastColumn = 4;
+		List<List<String>> rowList = FileUtil.readExcel(mstrFileName, mstrFirstRow, lastColumn);
 		Map<String, MstrDetails> mcodeAndMstrDetailsMap = new HashMap<>();
 
 		// Populate columns to java
@@ -65,7 +82,8 @@ public class ValidationUtil {
 			throws IOException {
 
 		// Read excel
-		List<List<String>> rowList = FileUtil.readExcel(bomTemplateFileName, bomTemplateFirstRow);
+		int lastColumn = 7;
+		List<List<String>> rowList = FileUtil.readExcel(bomTemplateFileName, bomTemplateFirstRow, lastColumn);
 		List<BomTemplate> bomTemplateList = new ArrayList<>();
 
 		// Populate columns to java
@@ -95,7 +113,7 @@ public class ValidationUtil {
 
 		CellStyle cellStyle = workbook.createCellStyle();
 		cellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND); 
+		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 		// Get each row
 		int rowNum = 1;
@@ -110,7 +128,7 @@ public class ValidationUtil {
 				Cell emailCell = sheet.getRow(rowNum).createCell(EMAILID_COLUMN_NUMBER);
 				emailCell.setCellStyle(cellStyle);
 				emailCell.setCellValue(email);
-				
+
 				// sheet.getRow(rowNum).getCell(MCODE_COLUMN_NUMBER).setCellStyle(null);
 
 			}
@@ -130,7 +148,7 @@ public class ValidationUtil {
 				if (!bomTemplate.getManufacturer().equals(mstrDetails.getGlobalManufacturerName())) {
 
 					// highlight manufacturer cell in bom template excel
-					
+
 					String manufacturer = sheet.getRow(rowNum).getCell(MANUFACTURER_COLUMN_NUMBER).getStringCellValue();
 					Cell manufacturerCell = sheet.getRow(rowNum).createCell(MANUFACTURER_COLUMN_NUMBER);
 					manufacturerCell.setCellStyle(cellStyle);
@@ -142,7 +160,7 @@ public class ValidationUtil {
 			} else {
 
 				// Highlight mcode cell in bom template excel
-				
+
 				String mcode = sheet.getRow(rowNum).getCell(MCODE_COLUMN_NUMBER).getStringCellValue();
 				Cell mcodeCell = sheet.getRow(rowNum).createCell(MCODE_COLUMN_NUMBER);
 				mcodeCell.setCellStyle(cellStyle);

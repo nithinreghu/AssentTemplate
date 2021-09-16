@@ -13,7 +13,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 public class FileUtil {
 
-	public static List<List<String>> readExcel(String filename, int firstRow) throws IOException {
+	public static List<List<String>> readExcel(String filename, int firstRow, int lastColumn) throws IOException {
 
 		List<List<String>> rowList = new ArrayList<>();
 		Workbook workbook = null;
@@ -30,7 +30,7 @@ public class FileUtil {
 				columnList = new ArrayList<>();
 				Row row = sheet.getRow(i);
 
-				for (int j = 0; j < row.getLastCellNum(); j++) {
+				for (int j = 0; j < lastColumn; j++) {
 					String cellValue = dataFormatter.formatCellValue(row.getCell(j));
 					columnList.add(cellValue);
 				}

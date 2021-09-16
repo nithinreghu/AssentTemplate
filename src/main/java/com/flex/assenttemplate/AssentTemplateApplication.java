@@ -30,7 +30,6 @@ public class AssentTemplateApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		ValidationUtil.validateBomTemplate(bomTemplateFileName, bomTemplateFirstRow, mstrFileName, mstrFirstRow);
-		System.out.println("Validation completed...........");
 	}
 
 }
