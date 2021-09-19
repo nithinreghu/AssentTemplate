@@ -11,9 +11,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import com.flex.assenttemplate.dto.BomTemplate;
+
 public class FileUtil {
 
-	public static List<List<String>> readExcel(String filename, int firstRow, int lastColumn) throws IOException {
+	public static List<List<String>> readExcel(String filename, int lastColumn) throws IOException {
 
 		List<List<String>> rowList = new ArrayList<>();
 		Workbook workbook = null;
@@ -25,7 +27,7 @@ public class FileUtil {
 			// Create a DataFormatter to format and get each cell's value as String
 			DataFormatter dataFormatter = new DataFormatter();
 
-			for (int i = firstRow - 1; i <= sheet.getLastRowNum(); i++) {
+			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 
 				columnList = new ArrayList<>();
 				Row row = sheet.getRow(i);
@@ -46,5 +48,30 @@ public class FileUtil {
 		}
 		return rowList;
 
+	}
+
+	public static List<BomTemplate> getBomTemplateExcelData(String bomTemplateFileName, int lastColumn)
+			throws IOException {
+
+		// Read excel
+		List<List<String>> rowList = readExcel(bomTemplateFileName, lastColumn);
+		List<BomTemplate> bomTemplateList = new ArrayList<>();
+
+		// Populate columns to java
+		for (List<String> row : rowList) {
+
+			BomTemplate bomTemplate = new BomTemplate();
+			bomTemplate.setFlexPartNo(row.get(0));
+			bomTemplate.setDescription(row.get(1));
+			bomTemplate.setManufacturer(row.get(2));
+			bomTemplate.setMcode(row.get(3));
+			bomTemplate.setMpn(row.get(4));
+			bomTemplate.setEmailID(row.get(6));
+
+			bomTemplateList.add(bomTemplate);
+
+		}
+
+		return bomTemplateList;
 	}
 }

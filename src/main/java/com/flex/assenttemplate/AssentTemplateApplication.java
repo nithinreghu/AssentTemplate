@@ -1,27 +1,26 @@
 package com.flex.assenttemplate;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.flex.assenttemplate.util.ValidationUtil;
+import com.flex.assenttemplate.service.AssentService;
+import com.flex.assenttemplate.service.ValidationService;
 
 @SpringBootApplication
 public class AssentTemplateApplication implements ApplicationRunner {
 
-	@Value("${bomTemplateFileName}")
-	private String bomTemplateFileName;
+	@Value("${userInput}")
+	private int userInput;
 
-	@Value("${bomTemplateFirstRow:2}")
-	private Integer bomTemplateFirstRow;
+	@Autowired
+	AssentService assentService;
 
-	@Value("${mstrFileName}")
-	private String mstrFileName;
-
-	@Value("${mstrFirstRow:2}")
-	private Integer mstrFirstRow;
+	@Autowired
+	ValidationService validationService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(AssentTemplateApplication.class, args);
@@ -29,7 +28,17 @@ public class AssentTemplateApplication implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		ValidationUtil.validateBomTemplate(bomTemplateFileName, bomTemplateFirstRow, mstrFileName, mstrFirstRow);
+
+		if (userInput == 1) {
+			validationService.validateBomTemplate();
+
+		} else if (userInput == 2) {
+			assentService.generateAssentTemplate();
+
+		} else {
+			throw new RuntimeException("Invalid value... Enter 1 or 2 and try again..");
+		}
+
 	}
 
 }

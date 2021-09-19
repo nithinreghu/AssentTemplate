@@ -1,10 +1,9 @@
-package com.flex.assenttemplate.util;
+package com.flex.assenttemplate.service;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +16,30 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.flex.assenttemplate.dto.BomTemplate;
 import com.flex.assenttemplate.dto.MstrDetails;
+import com.flex.assenttemplate.util.FileUtil;
 
-public class ValidationUtil {
+@Service
+public class ValidationService {
+
+	@Value("${assentTemplateFileName}")
+	private String assentTemplateFileName;
+
+	@Value("${bomTemplateFileName}")
+	private String bomTemplateFileName;
+
+	@Value("${bomTemplateFirstRow:2}")
+	private Integer bomTemplateFirstRow;
+
+	@Value("${mstrFileName}")
+	private String mstrFileName;
+
+	@Value("${mstrFirstRow:2}")
+	private Integer mstrFirstRow;
 
 	// column index starts from 0
 	private static final int MANUFACTURER_COLUMN_NUMBER = 2;
@@ -30,38 +48,38 @@ public class ValidationUtil {
 	private static final int GLOBAL_MFR_COLUMN_NUMBER = 9;
 	private static final int OBSOLETE_COLUMN_NUMBER = 10;
 
-	public static void validateBomTemplate(String bomTemplateFileName, Integer bomTemplateFirstRow, String mstrFileName,
-			Integer mstrFirstRow) throws IOException {
+	public void validateBomTemplate() throws IOException {
 
 		System.out.println("..........................................................");
 		System.out.println("Reading data from " + bomTemplateFileName + ". Please wait...");
 		System.out.println("..........................................................");
 		System.out.println("..........................................................");
 
-		List<BomTemplate> bomTemplateData = getBomTemplateExcelData(bomTemplateFileName, bomTemplateFirstRow);
+		int bomExcelLastColumnToBeRead = 7;
+		List<BomTemplate> bomTemplateList = FileUtil.getBomTemplateExcelData(bomTemplateFileName,
+				bomExcelLastColumnToBeRead);
 
 		System.out.println("Reading data from " + mstrFileName + ". Please wait...");
 		System.out.println("..........................................................");
 		System.out.println("..........................................................");
 		System.out.println("..........................................................");
-		Map<String, MstrDetails> mcodeAndMstrDetailsMap = getMstrExcelData(mstrFileName, mstrFirstRow);
+		Map<String, MstrDetails> mcodeAndMstrDetailsMap = getMstrExcelData(mstrFileName);
 
 		System.out.println("Validating mcode....");
 		System.out.println("..........................................................");
 		System.out.println("..........................................................");
-		validateMcodeAndUpdateBomTemplate(bomTemplateFileName, bomTemplateData, mcodeAndMstrDetailsMap);
+		validateMcodeAndUpdateBomTemplate(bomTemplateFileName, bomTemplateList, mcodeAndMstrDetailsMap);
 		System.out.println("Details are updated........................................");
 		System.out.println("Please verify the file............" + bomTemplateFileName);
 		System.out.println("..........................................................");
 
 	}
 
-	private static Map<String, MstrDetails> getMstrExcelData(String mstrFileName, Integer mstrFirstRow)
-			throws IOException {
+	public Map<String, MstrDetails> getMstrExcelData(String mstrFileName) throws IOException {
 
 		// Read excel
 		int lastColumn = 4;
-		List<List<String>> rowList = FileUtil.readExcel(mstrFileName, mstrFirstRow, lastColumn);
+		List<List<String>> rowList = FileUtil.readExcel(mstrFileName, lastColumn);
 		Map<String, MstrDetails> mcodeAndMstrDetailsMap = new HashMap<>();
 
 		// Populate columns to java
@@ -78,33 +96,7 @@ public class ValidationUtil {
 		return mcodeAndMstrDetailsMap;
 	}
 
-	private static List<BomTemplate> getBomTemplateExcelData(String bomTemplateFileName, Integer bomTemplateFirstRow)
-			throws IOException {
-
-		// Read excel
-		int lastColumn = 7;
-		List<List<String>> rowList = FileUtil.readExcel(bomTemplateFileName, bomTemplateFirstRow, lastColumn);
-		List<BomTemplate> bomTemplateList = new ArrayList<>();
-
-		// Populate columns to java
-		for (List<String> row : rowList) {
-
-			BomTemplate bomTemplate = new BomTemplate();
-			bomTemplate.setFlexPartNo(row.get(0));
-			bomTemplate.setDescription(row.get(1));
-			bomTemplate.setManufacturer(row.get(2));
-			bomTemplate.setMcode(row.get(3));
-			bomTemplate.setMpn(row.get(4));
-			bomTemplate.setEmailID(row.get(6));
-
-			bomTemplateList.add(bomTemplate);
-
-		}
-
-		return bomTemplateList;
-	}
-
-	private static void validateMcodeAndUpdateBomTemplate(String bomTemplateFileName, List<BomTemplate> bomTemplateList,
+	private void validateMcodeAndUpdateBomTemplate(String bomTemplateFileName, List<BomTemplate> bomTemplateList,
 			Map<String, MstrDetails> mcodeAndMstrDetailsMap) throws EncryptedDocumentException, IOException {
 
 		FileInputStream inputStream = new FileInputStream(new File(bomTemplateFileName));
