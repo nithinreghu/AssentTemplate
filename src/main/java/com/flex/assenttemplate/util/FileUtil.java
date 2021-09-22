@@ -66,7 +66,10 @@ public class FileUtil {
 			bomTemplate.setManufacturer(row.get(2));
 			bomTemplate.setMcode(row.get(3));
 			bomTemplate.setMpn(row.get(4));
+			bomTemplate.setQuantity(row.get(5));
 			bomTemplate.setEmailID(row.get(6));
+			bomTemplate.setTelno(row.get(7));
+			bomTemplate.setAssemblyNo(row.get(8));
 
 			bomTemplateList.add(bomTemplate);
 

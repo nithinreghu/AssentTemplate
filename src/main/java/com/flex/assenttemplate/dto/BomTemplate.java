@@ -13,6 +13,7 @@ public class BomTemplate {
 	private String assemblyNo;
 	private String globalMFR;
 	private String obsolete;
+	private String useInstead;
 
 	public String getFlexPartNo() {
 		return flexPartNo;
@@ -100,6 +101,14 @@ public class BomTemplate {
 
 	public void setObsolete(String obsolete) {
 		this.obsolete = obsolete;
+	}
+
+	public String getUseInstead() {
+		return useInstead;
+	}
+
+	public void setUseInstead(String useInstead) {
+		this.useInstead = useInstead;
 	}
 
 }

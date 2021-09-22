@@ -5,6 +5,7 @@ public class MstrDetails {
 	private String globalMfgCodes;
 	private String globalManufacturerName;
 	private String obsolete;
+	private String useInstead;
 
 	public String getGlobalMfgCodes() {
 		return globalMfgCodes;
@@ -28,6 +29,14 @@ public class MstrDetails {
 
 	public void setObsolete(String obsolete) {
 		this.obsolete = obsolete;
+	}
+
+	public String getUseInstead() {
+		return useInstead;
+	}
+
+	public void setUseInstead(String useInstead) {
+		this.useInstead = useInstead;
 	}
 
 }

@@ -29,15 +29,31 @@ public class AssentTemplateApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 
+		long time = System.currentTimeMillis();
+
 		if (userInput == 1) {
+
+			System.out.println("..................................................................");
+			System.out.println("........Validating BOM template...................................");
 			validationService.validateBomTemplate();
 
 		} else if (userInput == 2) {
+
+			System.out.println("..................................................................");
+			System.out.println("........Generating Assents template...............................");
+
 			assentService.generateAssentTemplate();
 
 		} else {
-			throw new RuntimeException("Invalid value... Enter 1 or 2 and try again..");
+			throw new RuntimeException("....Invalid value... Enter 1 or 2 and try again..");
 		}
+
+		System.out.println("..................................................................");
+		System.out.println("..................................................................");
+		System.out.println(
+				"....Time taken to complete the process: " + (System.currentTimeMillis() - time) / 1000 + " seconds");
+		System.out.println("..................................................................");
+		System.out.println("..................................................................");
 
 	}
 
