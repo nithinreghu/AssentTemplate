@@ -132,7 +132,7 @@ public class ValidationService {
 				System.out.println(
 						"........BLANK MPN FOUND at row " + (rowNum + 1) + " in the File: " + bomTemplateFileName + "");
 				System.out.println(
-						"........IGNORING REMAINING rows . Please re-check the excel IF THIS IS NOT THE LAST ROW");
+						"........IGNORING REMAINING rows. Please re-check the excel IF THIS IS NOT THE LAST ROW");
 				System.out.println("..................................................................");
 				System.out.println("..................................................................");
 				break;
