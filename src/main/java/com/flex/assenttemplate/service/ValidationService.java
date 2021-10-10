@@ -57,7 +57,7 @@ public class ValidationService {
 
 	private static final String REGEX_PATTERN_FOR_EMAIL = "(^[ ]*[a-z0-9_.-]+@[a-z0-9.-]+[ ]*$)";
 
-	public static final String VALIDATION_STATUS_SHEET_NAME = "Asset Validation Status";
+	public static final String VALIDATION_STATUS_SHEET_NAME = "Asset Validation QWERTY";
 
 	public static final String SUCCESS = "Success";
 	public static final String ERROR = "Error";
