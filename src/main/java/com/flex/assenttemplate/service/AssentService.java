@@ -111,8 +111,6 @@ public class AssentService {
 					".........Make sure to RE-RUN the BOM template validation after resolving the errors (if there are any).......");
 			System.out.println("..................................................................");
 			System.out.println("........KINDLY VALIDATE BOM TEMPLATE AGAIN !!!!!!!!...............");
-			System.out.println("..................................................................");
-			System.out.println("..................................................................");
 
 			throw new MyException();
 		}
