@@ -55,6 +55,8 @@ public class ValidationService {
 	private static final int USE_INSTEAD_COLUMN_NUMBER = 11;
 	private static final int ALTERNATE_MFR_COLUMN_NUMBER = 12;
 
+	private static final int REMARKS_COLUMN_NUMBER = 13;
+
 	private static final String REGEX_PATTERN_FOR_EMAIL = "(^[ ]*[a-z0-9_.-]+@[a-z0-9.-]+[ ]*$)";
 
 	public static final String VALIDATION_STATUS_SHEET_NAME = "Asset Validation QWERTY";
@@ -63,6 +65,7 @@ public class ValidationService {
 	public static final String ERROR = "Error";
 
 	private static final String YES = "yes";
+	public static final String ERROR_FOUND = "Error Found";
 
 	public void validateBomTemplate() throws IOException {
 
@@ -148,6 +151,8 @@ public class ValidationService {
 				emailCell.setCellStyle(cellStyle);
 				emailCell.setCellValue(email);
 
+				sheet.getRow(rowNum).createCell(REMARKS_COLUMN_NUMBER).setCellValue(ERROR_FOUND);
+
 			}
 
 			// Get the values corresponding to mcode
@@ -166,6 +171,8 @@ public class ValidationService {
 					sheet.getRow(rowNum).createCell(USE_INSTEAD_COLUMN_NUMBER)
 							.setCellValue(mstrDetails.getUseInstead());
 
+					errorFound = true;
+
 					if (null != mstrDetails.getUseInstead()) {
 
 						// Get the values corresponding to alternate mcode
@@ -176,6 +183,8 @@ public class ValidationService {
 									.setCellValue(alternateMstrDetails.getGlobalManufacturerName());
 						}
 					}
+
+					sheet.getRow(rowNum).createCell(REMARKS_COLUMN_NUMBER).setCellValue(ERROR_FOUND);
 				}
 
 				if (!bomTemplate.getManufacturer().equals(mstrDetails.getGlobalManufacturerName())) {
@@ -187,6 +196,8 @@ public class ValidationService {
 					Cell manufacturerCell = sheet.getRow(rowNum).createCell(MANUFACTURER_COLUMN_NUMBER);
 					manufacturerCell.setCellStyle(cellStyle);
 					manufacturerCell.setCellValue(manufacturer);
+
+					sheet.getRow(rowNum).createCell(REMARKS_COLUMN_NUMBER).setCellValue(ERROR_FOUND);
 				}
 
 			} else {
@@ -201,6 +212,8 @@ public class ValidationService {
 
 				sheet.getRow(rowNum).createCell(GLOBAL_MFR_COLUMN_NUMBER)
 						.setCellValue("MCode details are not available in MSTR document");
+
+				sheet.getRow(rowNum).createCell(REMARKS_COLUMN_NUMBER).setCellValue(ERROR_FOUND);
 
 			}
 			rowNum++;
