@@ -1,4 +1,4 @@
-	package com.flex.assenttemplate.service;
+package com.flex.assenttemplate.service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,6 +53,7 @@ public class ValidationService {
 	private static final int GLOBAL_MFR_COLUMN_NUMBER = 9;
 	private static final int OBSOLETE_COLUMN_NUMBER = 10;
 	private static final int USE_INSTEAD_COLUMN_NUMBER = 11;
+	private static final int ALTERNATE_MFR_COLUMN_NUMBER = 12;
 
 	private static final String REGEX_PATTERN_FOR_EMAIL = "(^[a-z0-9_.-]+@[a-z0-9.-]+$)";
 
@@ -147,6 +148,17 @@ public class ValidationService {
 				if (YES.equalsIgnoreCase(obsoleteFromMstrExcel)) {
 					sheet.getRow(rowNum).createCell(USE_INSTEAD_COLUMN_NUMBER)
 							.setCellValue(mstrDetails.getUseInstead());
+
+					if (null != mstrDetails.getUseInstead()) {
+
+						// Get the values corresponding to alternate mcode
+						MstrDetails alternateMstrDetails = mcodeAndMstrDetailsMap.get(mstrDetails.getUseInstead());
+						if (null != alternateMstrDetails && null != alternateMstrDetails.getGlobalManufacturerName()) {
+							// Update global mfr name in alternate mfr column
+							sheet.getRow(rowNum).createCell(ALTERNATE_MFR_COLUMN_NUMBER)
+									.setCellValue(alternateMstrDetails.getGlobalManufacturerName());
+						}
+					}
 				}
 
 				if (!bomTemplate.getManufacturer().equals(mstrDetails.getGlobalManufacturerName())) {
@@ -157,7 +169,6 @@ public class ValidationService {
 					Cell manufacturerCell = sheet.getRow(rowNum).createCell(MANUFACTURER_COLUMN_NUMBER);
 					manufacturerCell.setCellStyle(cellStyle);
 					manufacturerCell.setCellValue(manufacturer);
-
 				}
 
 			} else {
