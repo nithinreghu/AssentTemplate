@@ -192,7 +192,7 @@ public class AssentService {
 
 			// ---------------Sheet 3 (Supplier Contact Details)---------
 
-			if (null != supplierContactDetails.getEmailID() && !supplierContactDetails.getEmailID().isBlank()) {
+			if (null != supplierContactDetails.getEmailID() && !supplierContactDetails.getEmailID().isEmpty()) {
 
 				updateColumn(sheet3, rowNum, ASSENT_SUPPLIER_CONTACT_DETAILS_SUPPLIER_NAME,
 						supplierContactDetails.getManufacturer(), format);

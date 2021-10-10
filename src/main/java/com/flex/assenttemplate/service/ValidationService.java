@@ -128,7 +128,7 @@ public class ValidationService {
 		int rowNum = 1;
 		for (BomTemplate bomTemplate : bomTemplateList) {
 
-			if (null == bomTemplate.getMpn() || bomTemplate.getMpn().isBlank()) {
+			if (null == bomTemplate.getMpn() || bomTemplate.getMpn().isEmpty()) {
 				System.out.println(
 						"........BLANK MPN FOUND at row " + (rowNum + 1) + " in the File: " + bomTemplateFileName + "");
 				System.out.println(
