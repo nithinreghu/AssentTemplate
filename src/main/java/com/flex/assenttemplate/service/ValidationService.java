@@ -128,7 +128,13 @@ public class ValidationService {
 		int rowNum = 1;
 		for (BomTemplate bomTemplate : bomTemplateList) {
 
-			if (null == bomTemplate.getFlexPartNo() || bomTemplate.getFlexPartNo().isBlank()) {
+			if (null == bomTemplate.getMpn() || bomTemplate.getMpn().isBlank()) {
+				System.out.println(
+						"........BLANK MPN FOUND at row " + (rowNum + 1) + " in the File: " + bomTemplateFileName + "");
+				System.out.println(
+						"........IGNORING REMAINING rows . Please re-check the excel IF THIS IS NOT THE LAST ROW");
+				System.out.println("..................................................................");
+				System.out.println("..................................................................");
 				break;
 			}
 
