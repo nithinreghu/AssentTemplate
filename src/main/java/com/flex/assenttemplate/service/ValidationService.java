@@ -57,6 +57,11 @@ public class ValidationService {
 
 	private static final String REGEX_PATTERN_FOR_EMAIL = "(^[ ]*[a-z0-9_.-]+@[a-z0-9.-]+[ ]*$)";
 
+	public static final String VALIDATION_STATUS_SHEET_NAME = "Asset Validation Status";
+
+	public static final String SUCCESS = "Success";
+	public static final String ERROR = "Error";
+
 	private static final String YES = "yes";
 
 	public void validateBomTemplate() throws IOException {
@@ -115,6 +120,7 @@ public class ValidationService {
 		Workbook workbook = WorkbookFactory.create(inputStream);
 
 		Sheet sheet = workbook.getSheetAt(0);
+		boolean errorFound = false;
 
 		CellStyle cellStyle = updateCellStyle(workbook.createCellStyle());
 
@@ -122,8 +128,13 @@ public class ValidationService {
 		int rowNum = 1;
 		for (BomTemplate bomTemplate : bomTemplateList) {
 
+			if (null == bomTemplate.getFlexPartNo() || bomTemplate.getFlexPartNo().isBlank()) {
+				break;
+			}
+
 			if (isInvalidEmail(bomTemplate.getEmailID().toLowerCase())) {
 
+				errorFound = true;
 				// Highlight email column in bom template excel
 				String email = sheet.getRow(rowNum).getCell(EMAILID_COLUMN_NUMBER).getStringCellValue();
 
@@ -163,6 +174,7 @@ public class ValidationService {
 
 				if (!bomTemplate.getManufacturer().equals(mstrDetails.getGlobalManufacturerName())) {
 
+					errorFound = true;
 					// highlight manufacturer cell in bom template excel
 
 					String manufacturer = sheet.getRow(rowNum).getCell(MANUFACTURER_COLUMN_NUMBER).getStringCellValue();
@@ -173,6 +185,7 @@ public class ValidationService {
 
 			} else {
 
+				errorFound = true;
 				// Highlight mcode cell in bom template excel
 
 				String mcode = sheet.getRow(rowNum).getCell(MCODE_COLUMN_NUMBER).getStringCellValue();
@@ -188,11 +201,37 @@ public class ValidationService {
 
 		}
 
+		setCompletionStatus(workbook, errorFound);
+
 		FileOutputStream outputStream = new FileOutputStream(bomTemplateFileName);
 		workbook.write(outputStream);
 		workbook.close();
 		outputStream.close();
 
+	}
+
+	private void setCompletionStatus(Workbook workbook, boolean errorFound) {
+		String sheetName = VALIDATION_STATUS_SHEET_NAME;
+		Sheet sheet = workbook.getSheet(sheetName);
+
+		int index = workbook.getSheetIndex(sheetName);
+		if (index < 0) {
+			// if sheet doesnt exist
+			sheet = workbook.createSheet(sheetName);
+		}
+
+		Cell cell = sheet.createRow(0).createCell(0);
+		if (errorFound) {
+
+			cell.setCellValue(ERROR);
+		} else {
+			cell.setCellValue(SUCCESS);
+		}
+
+		workbook.setActiveSheet(0);
+		workbook.setSheetHidden(workbook.getSheetIndex(sheetName), true);
+
+		System.out.println("........Updated validation status....");
 	}
 
 	private CellStyle updateCellStyle(CellStyle cellStyle) {
@@ -211,6 +250,11 @@ public class ValidationService {
 	}
 
 	private boolean isInvalidEmail(String emailID) {
+
+		// Checking space
+		if (emailID.isBlank()) {
+			return false;
+		}
 
 		boolean isInvalid = false;
 

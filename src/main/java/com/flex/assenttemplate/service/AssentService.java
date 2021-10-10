@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.flex.assenttemplate.dto.BomTemplate;
 import com.flex.assenttemplate.dto.SupplierContactDetails;
 import com.flex.assenttemplate.dto.SupplierDetails;
+import com.flex.assenttemplate.exception.MyException;
 import com.flex.assenttemplate.util.FileUtil;
 
 @Service
@@ -62,7 +63,7 @@ public class AssentService {
 	private static final int ASSENT_LEVELED_BOM_DETAILS_PROJECT_NAME = 29;
 	private static final int ASSENT_LEVELED_BOM_DETAILS_TICKET_NO = 33;
 
-	public void generateAssentTemplate() throws IOException {
+	public void generateAssentTemplate() throws IOException, EncryptedDocumentException, MyException {
 
 		System.out.println("..................................................................");
 
@@ -70,6 +71,10 @@ public class AssentService {
 		System.out.println("........Bom template file name......" + bomTemplateFileName);
 		System.out.println("........Customer Name..............." + customerName);
 		System.out.println("........Ticket Number..............." + ticketNumber);
+
+		System.out.println("..................................................................");
+		System.out.println("........Verifying validation status in " + bomTemplateFileName + ". Please wait...");
+		verifyValidationStatus();
 
 		System.out.println("..................................................................");
 		System.out.println("........Reading data from " + bomTemplateFileName + ". Please wait...");
@@ -84,6 +89,33 @@ public class AssentService {
 
 		System.out.println("........Template created successfully..............................");
 		System.out.println("........Please refer the file............" + assentTemplateFileName);
+
+	}
+
+	private void verifyValidationStatus() throws EncryptedDocumentException, IOException, MyException {
+
+		FileInputStream inputStream = new FileInputStream(new File(bomTemplateFileName));
+		Workbook workbook = WorkbookFactory.create(inputStream);
+		Sheet sheet = workbook.getSheet(ValidationService.VALIDATION_STATUS_SHEET_NAME);
+
+		if (null != sheet && null != sheet.getRow(0) && null != sheet.getRow(0).getCell(0)
+				&& ValidationService.SUCCESS.equals(sheet.getRow(0).getCell(0).getStringCellValue())) {
+
+			System.out.println("........Verified validation status... Proceeding to generate asset template");
+		} else {
+			System.out.println("..................................................................");
+			System.out.println("..................................................................");
+			System.out.println(
+					"........Please verify if the BOM template valdation has been completed and all errors have been resolved.......");
+			System.out.println(
+					".........Make sure to RE-RUN the BOM template validation after resolving the errors (if there are any).......");
+			System.out.println("..................................................................");
+			System.out.println("........KINDLY VALIDATE BOM TEMPLATE AGAIN !!!!!!!!...............");
+			System.out.println("..................................................................");
+			System.out.println("..................................................................");
+
+			throw new MyException();
+		}
 
 	}
 
@@ -163,7 +195,7 @@ public class AssentService {
 			// ---------------Sheet 3 (Supplier Contact Details)---------
 
 			if (null != supplierContactDetails.getEmailID() && !supplierContactDetails.getEmailID().isBlank()) {
-				
+
 				updateColumn(sheet3, rowNum, ASSENT_SUPPLIER_CONTACT_DETAILS_SUPPLIER_NAME,
 						supplierContactDetails.getManufacturer(), format);
 				updateColumn(sheet3, rowNum, ASSENT_SUPPLIER_CONTACT_DETAILS_SUPPLIER_NO,

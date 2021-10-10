@@ -7,6 +7,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.flex.assenttemplate.exception.MyException;
 import com.flex.assenttemplate.service.AssentService;
 import com.flex.assenttemplate.service.ValidationService;
 
@@ -42,7 +43,11 @@ public class AssentTemplateApplication implements ApplicationRunner {
 			System.out.println("..................................................................");
 			System.out.println("........Generating Assents template...............................");
 
-			assentService.generateAssentTemplate();
+			try {
+				assentService.generateAssentTemplate();
+			} catch (MyException e) {
+				// Empty
+			}
 
 		} else {
 			throw new RuntimeException("....Invalid value... Enter 1 or 2 and try again..");
