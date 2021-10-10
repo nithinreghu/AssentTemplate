@@ -258,7 +258,7 @@ public class ValidationService {
 	private boolean isInvalidEmail(String emailID) {
 
 		// Checking space
-		if (emailID.isBlank()) {
+		if (emailID == null || emailID.isEmpty()) {
 			return false;
 		}
 
