@@ -55,7 +55,7 @@ public class ValidationService {
 	private static final int USE_INSTEAD_COLUMN_NUMBER = 11;
 	private static final int ALTERNATE_MFR_COLUMN_NUMBER = 12;
 
-	private static final String REGEX_PATTERN_FOR_EMAIL = "(^[a-z0-9_.-]+@[a-z0-9.-]+$)";
+	private static final String REGEX_PATTERN_FOR_EMAIL = "(^[ ]*[a-z0-9_.-]+@[a-z0-9.-]+[ ]*$)";
 
 	private static final String YES = "yes";
 
@@ -213,16 +213,12 @@ public class ValidationService {
 	private boolean isInvalidEmail(String emailID) {
 
 		boolean isInvalid = false;
-		String[] emailList = emailID.split(";");
 
 		Pattern regexToFind = Pattern.compile(REGEX_PATTERN_FOR_EMAIL);
 
-		for (String email : emailList) {
-			Matcher regexMatcherToFind = regexToFind.matcher(email);
-			if (!regexMatcherToFind.find()) {
-				isInvalid = true;
-				break;
-			}
+		Matcher regexMatcherToFind = regexToFind.matcher(emailID);
+		if (!regexMatcherToFind.find()) {
+			isInvalid = true;
 		}
 
 		return isInvalid || emailID.contains("@flex.com") || emailID.contains("@bomcheck.com");
