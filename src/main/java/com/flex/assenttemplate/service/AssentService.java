@@ -1,10 +1,12 @@
-	package com.flex.assenttemplate.service;
+package com.flex.assenttemplate.service;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -14,10 +16,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.flex.assenttemplate.dto.BomTemplate;
+import com.flex.assenttemplate.dto.SupplierContactDetails;
+import com.flex.assenttemplate.dto.SupplierDetails;
 import com.flex.assenttemplate.util.FileUtil;
 
 @Service
@@ -103,19 +108,7 @@ public class AssentService {
 
 			// Update the values from bom template in the assent template excel
 
-			// ---------------Sheet 2 (Supplier Details)-----------------
-			updateColumn(sheet2, rowNum, ASSENT_SUPPLIER_DETAILS_SUPPLIER_NAME, bomTemplate.getManufacturer(), format);
-			updateColumn(sheet2, rowNum, ASSENT_SUPPLIER_DETAILS_SUPPLIER_NO, bomTemplate.getMcode(), format);
-			updateColumn(sheet2, rowNum, ASSENT_SUPPLIER_DETAILS_TICKET_NUMBER, ticketNumber, format);
-
-			// ---------------Sheet 3 (Supplier Contact Details)---------
-			updateColumn(sheet3, rowNum, ASSENT_SUPPLIER_CONTACT_DETAILS_SUPPLIER_NAME, bomTemplate.getManufacturer(),
-					format);
-			updateColumn(sheet3, rowNum, ASSENT_SUPPLIER_CONTACT_DETAILS_SUPPLIER_NO, bomTemplate.getMcode(), format);
-			updateColumn(sheet3, rowNum, ASSENT_SUPPLIER_CONTACT_DETAILS_SUPPLIER_CONTACT_EMAIL,
-					bomTemplate.getEmailID(), format);
-
-			// ---------------Sheet 3 (Leveled BOM Details) From second row --------
+			// ---------------Sheet 4 (Leveled BOM Details) From second row --------
 			int leveledBomRowNumber = rowNum + 1;
 			updateColumn(sheet4, leveledBomRowNumber, ASSENT_LEVELED_BOM_DETAILS_BOM_LEVEL, bomTemplate.getAssemblyNo(),
 					format);
@@ -143,11 +136,66 @@ public class AssentService {
 			rowNum++;
 		}
 
+		updateSupplierDetails(sheet2, format, bomTemplateList);
+		updateSupplierContactDetails(sheet3, format, bomTemplateList);
+
 		// Save excel
 		FileOutputStream outputStream = new FileOutputStream(assentTemplateFileName);
 		workbook.write(outputStream);
 		workbook.close();
 		outputStream.close();
+
+	}
+
+	private void updateSupplierContactDetails(Sheet sheet3, DataFormat format, List<BomTemplate> bomTemplateList) {
+
+		ModelMapper modelMapper = new ModelMapper();
+		Set<SupplierContactDetails> uniqueSupplierContactDetails = bomTemplateList.stream()
+				.map(bomTemplate -> modelMapper.map(bomTemplate, SupplierContactDetails.class))
+				.collect(Collectors.toSet());
+
+		int rowNum = 1;
+
+		for (SupplierContactDetails supplierContactDetails : uniqueSupplierContactDetails) {
+
+			// Update the values from bom template in the assent template excel
+
+			// ---------------Sheet 3 (Supplier Contact Details)---------
+
+			if (null != supplierContactDetails.getEmailID() && !supplierContactDetails.getEmailID().isBlank()) {
+				
+				updateColumn(sheet3, rowNum, ASSENT_SUPPLIER_CONTACT_DETAILS_SUPPLIER_NAME,
+						supplierContactDetails.getManufacturer(), format);
+				updateColumn(sheet3, rowNum, ASSENT_SUPPLIER_CONTACT_DETAILS_SUPPLIER_NO,
+						supplierContactDetails.getMcode(), format);
+				updateColumn(sheet3, rowNum, ASSENT_SUPPLIER_CONTACT_DETAILS_SUPPLIER_CONTACT_EMAIL,
+						supplierContactDetails.getEmailID(), format);
+
+				rowNum++;
+			}
+		}
+
+	}
+
+	private void updateSupplierDetails(Sheet sheet2, DataFormat format, List<BomTemplate> bomTemplateList) {
+
+		ModelMapper modelMapper = new ModelMapper();
+		Set<SupplierDetails> uniqueSupplierDetails = bomTemplateList.stream()
+				.map(bomTemplate -> modelMapper.map(bomTemplate, SupplierDetails.class)).collect(Collectors.toSet());
+
+		int rowNum = 1;
+
+		for (SupplierDetails supplierDetails : uniqueSupplierDetails) {
+
+			// Update the values from bom template in the assent template excel
+
+			// ---------------Sheet 2 (Supplier Details)-----------------
+			updateColumn(sheet2, rowNum, ASSENT_SUPPLIER_DETAILS_SUPPLIER_NAME, supplierDetails.getManufacturer(),
+					format);
+			updateColumn(sheet2, rowNum, ASSENT_SUPPLIER_DETAILS_SUPPLIER_NO, supplierDetails.getMcode(), format);
+			updateColumn(sheet2, rowNum, ASSENT_SUPPLIER_DETAILS_TICKET_NUMBER, ticketNumber, format);
+			rowNum++;
+		}
 
 	}
 
