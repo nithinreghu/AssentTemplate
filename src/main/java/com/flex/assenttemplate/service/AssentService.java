@@ -57,11 +57,11 @@ public class AssentService {
 	private static final int ASSENT_LEVELED_BOM_DETAILS_SUPPLIER_PART_NUMBER = 9;
 	private static final int ASSENT_LEVELED_BOM_DETAILS_QUANTITY = 10;
 	private static final int ASSENT_LEVELED_BOM_DETAILS_UNIT_OF_MEASURE = 11;
-	private static final int ASSENT_LEVELED_BOM_DETAILS_STATUS = 21;
-	private static final int ASSENT_LEVELED_BOM_DETAILS_FLEX_PART_NO = 27;
-	private static final int ASSENT_LEVELED_BOM_DETAILS_CUSTOMER_NAME = 28;
-	private static final int ASSENT_LEVELED_BOM_DETAILS_PROJECT_NAME = 29;
-	private static final int ASSENT_LEVELED_BOM_DETAILS_TICKET_NO = 33;
+	private static final int ASSENT_LEVELED_BOM_DETAILS_STATUS = 26;
+	private static final int ASSENT_LEVELED_BOM_DETAILS_FLEX_PART_NO = 32;
+	private static final int ASSENT_LEVELED_BOM_DETAILS_CUSTOMER_NAME = 33;
+	private static final int ASSENT_LEVELED_BOM_DETAILS_PROJECT_NAME = 34;
+	private static final int ASSENT_LEVELED_BOM_DETAILS_TICKET_NO = 38;
 
 	public void generateAssentTemplate() throws IOException, EncryptedDocumentException, MyException {
 

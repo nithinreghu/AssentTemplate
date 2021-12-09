@@ -58,7 +58,19 @@ public class FileUtil {
 		List<BomTemplate> bomTemplateList = new ArrayList<>();
 
 		// Populate columns to java
+		int rowNum = 1;
 		for (List<String> row : rowList) {
+
+			if (null == row.get(3) || row.get(3).isEmpty()) {
+
+				System.out.println(
+						"........BLANK MPN FOUND at row " + (rowNum + 1) + " in the File: " + bomTemplateFileName + "");
+				System.out.println(
+						"........IGNORING REMAINING rows. Please re-check the excel IF THIS IS NOT THE LAST ROW");
+				System.out.println("..................................................................");
+				System.out.println("..................................................................");
+				break;
+			}
 
 			BomTemplate bomTemplate = new BomTemplate();
 			bomTemplate.setFlexPartNo(row.get(0));
@@ -72,6 +84,7 @@ public class FileUtil {
 			bomTemplate.setAssemblyNo(row.get(8));
 
 			bomTemplateList.add(bomTemplate);
+			rowNum++;
 
 		}
 
