@@ -14,6 +14,7 @@ public class BomTemplate {
 	private String globalMFR;
 	private String obsolete;
 	private String useInstead;
+	private String commodity;
 
 	public String getFlexPartNo() {
 		return flexPartNo;
@@ -111,4 +112,12 @@ public class BomTemplate {
 		this.useInstead = useInstead;
 	}
 
+	public String getCommodity() {
+		return commodity;
+	}
+
+	public void setCommodity(String commodity) {
+		this.commodity = commodity;
+	}
+	
 }

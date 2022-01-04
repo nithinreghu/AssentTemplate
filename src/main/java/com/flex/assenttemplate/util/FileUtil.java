@@ -1,5 +1,16 @@
 package com.flex.assenttemplate.util;
 
+import static com.flex.assenttemplate.util.Constants.ASSEMBLY_NO_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.COMMODITY_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.DESCRIPTION_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.EMAILID_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.FLEX_PART_NO_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.MANUFACTURER_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.MCODE_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.MPN_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.QUANTITY_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.TEL_NO_COLUMN_NUMBER;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,15 +84,16 @@ public class FileUtil {
 			}
 
 			BomTemplate bomTemplate = new BomTemplate();
-			bomTemplate.setFlexPartNo(row.get(0));
-			bomTemplate.setDescription(row.get(1));
-			bomTemplate.setManufacturer(row.get(2));
-			bomTemplate.setMcode(row.get(3));
-			bomTemplate.setMpn(row.get(4));
-			bomTemplate.setQuantity(row.get(5));
-			bomTemplate.setEmailID(row.get(6));
-			bomTemplate.setTelno(row.get(7));
-			bomTemplate.setAssemblyNo(row.get(8));
+			bomTemplate.setFlexPartNo(row.get(FLEX_PART_NO_COLUMN_NUMBER));
+			bomTemplate.setDescription(row.get(DESCRIPTION_COLUMN_NUMBER));
+			bomTemplate.setManufacturer(row.get(MANUFACTURER_COLUMN_NUMBER));
+			bomTemplate.setMcode(row.get(MCODE_COLUMN_NUMBER));
+			bomTemplate.setMpn(row.get(MPN_COLUMN_NUMBER));
+			bomTemplate.setQuantity(row.get(QUANTITY_COLUMN_NUMBER));
+			bomTemplate.setEmailID(row.get(EMAILID_COLUMN_NUMBER));
+			bomTemplate.setTelno(row.get(TEL_NO_COLUMN_NUMBER));
+			bomTemplate.setAssemblyNo(row.get(ASSEMBLY_NO_COLUMN_NUMBER));
+			bomTemplate.setCommodity(row.get(COMMODITY_COLUMN_NUMBER));
 
 			bomTemplateList.add(bomTemplate);
 			rowNum++;

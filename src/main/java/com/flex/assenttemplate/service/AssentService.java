@@ -1,5 +1,9 @@
 package com.flex.assenttemplate.service;
 
+import static com.flex.assenttemplate.util.Constants.OBSOLETE_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.SUCCESS;
+import static com.flex.assenttemplate.util.Constants.VALIDATION_STATUS_SHEET_NAME;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -81,7 +85,7 @@ public class AssentService {
 		System.out.println("..................................................................");
 		System.out.println("..................................................................");
 
-		int bomExcelLastColumnToBeRead = 10;
+		int bomExcelLastColumnToBeRead = OBSOLETE_COLUMN_NUMBER;
 		List<BomTemplate> bomTemplateList = FileUtil.getBomTemplateExcelData(bomTemplateFileName,
 				bomExcelLastColumnToBeRead);
 
@@ -96,10 +100,10 @@ public class AssentService {
 
 		FileInputStream inputStream = new FileInputStream(new File(bomTemplateFileName));
 		Workbook workbook = WorkbookFactory.create(inputStream);
-		Sheet sheet = workbook.getSheet(ValidationService.VALIDATION_STATUS_SHEET_NAME);
+		Sheet sheet = workbook.getSheet(VALIDATION_STATUS_SHEET_NAME);
 
 		if (null != sheet && null != sheet.getRow(0) && null != sheet.getRow(0).getCell(0)
-				&& ValidationService.SUCCESS.equals(sheet.getRow(0).getCell(0).getStringCellValue())) {
+				&& SUCCESS.equals(sheet.getRow(0).getCell(0).getStringCellValue())) {
 
 			System.out.println("........Verified validation status... Proceeding to generate asset template");
 		} else {
@@ -246,9 +250,12 @@ public class AssentService {
 	 * Update the value in each cell.
 	 * 
 	 * @param sheet
-	 * @param rowNum       row number starts from 0
-	 * @param columnNumber number corresponding to colummn (eg: A -> 0, B->1...)
-	 * @param columnValue  value to be updated in the column
+	 * @param rowNum
+	 *            row number starts from 0
+	 * @param columnNumber
+	 *            number corresponding to colummn (eg: A -> 0, B->1...)
+	 * @param columnValue
+	 *            value to be updated in the column
 	 * @param format
 	 */
 	private void updateColumn(Sheet sheet, int rowNum, int columnNumber, String columnValue, DataFormat format) {

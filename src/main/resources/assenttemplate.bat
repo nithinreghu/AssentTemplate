@@ -18,6 +18,11 @@ if %userInput% ==1 (
 	echo Please enter the MSTR excel file name along with extension
 	set /p mstrFileName=""
 	
+	echo.
+  
+	echo Please enter the Commodity excel file name along with extension
+	set /p commodityFileName=""
+	
 ) else if %userInput% ==2 (
   	echo You have selected the option to 'Generate Assent template'
   	
@@ -54,6 +59,6 @@ echo "Please wait for the process to complete..."
 echo.
 echo.
 
-java -Xmx1024m -jar -DuserInput="%userInput%" -DbomTemplateFileName="%bomTemplateFileName%" -DmstrFileName="%mstrFileName%" -DassentTemplateFileName="%assentTemplateFileName%" -DcustomerName="%customerName%" -DticketNumber="%ticketNumber%" assenttemplate-0.0.1-SNAPSHOT.jar
+java -Xmx1024m -jar -DuserInput="%userInput%" -DcommodityFileName="%commodityFileName%" -DbomTemplateFileName="%bomTemplateFileName%" -DmstrFileName="%mstrFileName%" -DassentTemplateFileName="%assentTemplateFileName%" -DcustomerName="%customerName%" -DticketNumber="%ticketNumber%" assenttemplate-0.0.1-SNAPSHOT.jar
 
 cmd /k

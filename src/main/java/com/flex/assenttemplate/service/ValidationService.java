@@ -1,14 +1,33 @@
 package com.flex.assenttemplate.service;
 
+import static com.flex.assenttemplate.util.Constants.ALTERNATE_MFR_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.COMMODITY_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.EMAILID_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.ERROR;
+import static com.flex.assenttemplate.util.Constants.ERROR_FOUND;
+import static com.flex.assenttemplate.util.Constants.GLOBAL_MFR_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.MANUFACTURER_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.MCODE_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.OBSOLETE_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.REGEX_PATTERN_FOR_EMAIL;
+import static com.flex.assenttemplate.util.Constants.REGEX_PATTERN_FOR_SPACE;
+import static com.flex.assenttemplate.util.Constants.REMARKS_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.SUCCESS;
+import static com.flex.assenttemplate.util.Constants.USE_INSTEAD_COLUMN_NUMBER;
+import static com.flex.assenttemplate.util.Constants.VALIDATION_STATUS_SHEET_NAME;
+import static com.flex.assenttemplate.util.Constants.YES;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -46,26 +65,8 @@ public class ValidationService {
 	@Value("${mstrFirstRow:2}")
 	private Integer mstrFirstRow;
 
-	// column index starts from 0
-	private static final int MANUFACTURER_COLUMN_NUMBER = 2;
-	private static final int MCODE_COLUMN_NUMBER = 3;
-	private static final int EMAILID_COLUMN_NUMBER = 6;
-	private static final int GLOBAL_MFR_COLUMN_NUMBER = 9;
-	private static final int OBSOLETE_COLUMN_NUMBER = 10;
-	private static final int USE_INSTEAD_COLUMN_NUMBER = 11;
-	private static final int ALTERNATE_MFR_COLUMN_NUMBER = 12;
-
-	private static final int REMARKS_COLUMN_NUMBER = 13;
-
-	private static final String REGEX_PATTERN_FOR_EMAIL = "(^[ ]*[a-z0-9_.-]+@[a-z0-9.-]+[ ]*$)";
-
-	public static final String VALIDATION_STATUS_SHEET_NAME = "Asset Validation QWERTY";
-
-	public static final String SUCCESS = "Success";
-	public static final String ERROR = "Error";
-
-	private static final String YES = "yes";
-	public static final String ERROR_FOUND = "Error Found";
+	@Value("${commodityFileName}")
+	private String commodityFileName;
 
 	public void validateBomTemplate() throws IOException {
 
@@ -74,7 +75,7 @@ public class ValidationService {
 		System.out.println("..................................................................");
 		System.out.println("..................................................................");
 
-		int bomExcelLastColumnToBeRead = 10;
+		int bomExcelLastColumnToBeRead = OBSOLETE_COLUMN_NUMBER;
 		List<BomTemplate> bomTemplateList = FileUtil.getBomTemplateExcelData(bomTemplateFileName,
 				bomExcelLastColumnToBeRead);
 
@@ -84,9 +85,6 @@ public class ValidationService {
 		System.out.println("..................................................................");
 		Map<String, MstrDetails> mcodeAndMstrDetailsMap = getMstrExcelData(mstrFileName);
 
-		System.out.println("........Validating mcode....");
-		System.out.println("..................................................................");
-		System.out.println("..................................................................");
 		validateMcodeAndUpdateBomTemplate(bomTemplateFileName, bomTemplateList, mcodeAndMstrDetailsMap);
 		System.out.println("........Details are updated........................................");
 		System.out.println("........Please verify the file............" + bomTemplateFileName);
@@ -119,6 +117,18 @@ public class ValidationService {
 	private void validateMcodeAndUpdateBomTemplate(String bomTemplateFileName, List<BomTemplate> bomTemplateList,
 			Map<String, MstrDetails> mcodeAndMstrDetailsMap) throws EncryptedDocumentException, IOException {
 
+		System.out.println("........Reading data from " + commodityFileName + ". Please wait...");
+		System.out.println("..................................................................");
+		System.out.println("..................................................................");
+		System.out.println("..................................................................");
+		
+		List<List<String>> commodityExcelList = FileUtil.readExcel(commodityFileName, 1);
+		List<String> commodityList = commodityExcelList.stream().map(row -> row.get(0)).collect(Collectors.toList());
+		
+		System.out.println("........Validating mcode....");
+		System.out.println("..................................................................");
+		System.out.println("..................................................................");
+
 		FileInputStream inputStream = new FileInputStream(new File(bomTemplateFileName));
 		Workbook workbook = WorkbookFactory.create(inputStream);
 
@@ -143,6 +153,18 @@ public class ValidationService {
 
 				sheet.getRow(rowNum).createCell(REMARKS_COLUMN_NUMBER).setCellValue(ERROR_FOUND);
 
+			}
+
+			if (isInvalidCommodity(bomTemplate.getCommodity(), commodityList)) {
+				errorFound = true;
+				// Highlight commodity column in bom template excel
+				String commodity = sheet.getRow(rowNum).getCell(COMMODITY_COLUMN_NUMBER).getStringCellValue();
+
+				Cell commodityCell = sheet.getRow(rowNum).createCell(COMMODITY_COLUMN_NUMBER);
+				commodityCell.setCellStyle(cellStyle);
+				commodityCell.setCellValue(commodity);
+
+				sheet.getRow(rowNum).createCell(REMARKS_COLUMN_NUMBER).setCellValue(ERROR_FOUND);
 			}
 
 			// Get the values corresponding to mcode
@@ -256,6 +278,24 @@ public class ValidationService {
 		cellStyle.setBorderRight(BorderStyle.THIN);
 
 		return cellStyle;
+	}
+
+	private boolean isInvalidCommodity(String commodity, List<String> commodityList) {
+
+		// Checking space
+		if (commodity == null || commodity.isEmpty()) {
+			return false;
+		}
+
+		Pattern regexToFind = Pattern.compile(REGEX_PATTERN_FOR_SPACE);
+
+		Matcher regexMatcherToFind = regexToFind.matcher(commodity);
+		if (regexMatcherToFind.find()) {
+			return false;
+		}
+
+		// return true if value not present in list
+		return !commodityList.contains(commodity);
 	}
 
 	private boolean isInvalidEmail(String emailID) {
