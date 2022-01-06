@@ -61,6 +61,7 @@ public class AssentService {
 	private static final int ASSENT_LEVELED_BOM_DETAILS_SUPPLIER_PART_NUMBER = 9;
 	private static final int ASSENT_LEVELED_BOM_DETAILS_QUANTITY = 10;
 	private static final int ASSENT_LEVELED_BOM_DETAILS_UNIT_OF_MEASURE = 11;
+	private static final int ASSENT_LEVELED_BOM_DETAILS_COMMODITY = 25;
 	private static final int ASSENT_LEVELED_BOM_DETAILS_STATUS = 26;
 	private static final int ASSENT_LEVELED_BOM_DETAILS_FLEX_PART_NO = 32;
 	private static final int ASSENT_LEVELED_BOM_DETAILS_CUSTOMER_NAME = 33;
@@ -159,6 +160,8 @@ public class AssentService {
 			updateColumn(sheet4, leveledBomRowNumber, ASSENT_LEVELED_BOM_DETAILS_QUANTITY, bomTemplate.getQuantity(),
 					format);
 			updateColumn(sheet4, leveledBomRowNumber, ASSENT_LEVELED_BOM_DETAILS_UNIT_OF_MEASURE, "each", format);
+			updateColumn(sheet4, leveledBomRowNumber, ASSENT_LEVELED_BOM_DETAILS_COMMODITY, bomTemplate.getCommodity(),
+					format);
 			updateColumn(sheet4, leveledBomRowNumber, ASSENT_LEVELED_BOM_DETAILS_STATUS, "qualified", format);
 			updateColumn(sheet4, leveledBomRowNumber, ASSENT_LEVELED_BOM_DETAILS_FLEX_PART_NO,
 					bomTemplate.getFlexPartNo(), format);
